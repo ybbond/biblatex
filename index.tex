@@ -85,27 +85,34 @@
 \newcommand\chapnumcolor{red}
 \newlength{\biblechapskip}
   \setlength{\biblechapskip}{1em plus .33em minus .2em}
+
 \newcounter{biblechapter}
 \newcounter{bibleverse}[biblechapter]
+\newcounter{verseparted}
+
 \renewcommand\chaptername{Book}
 \newcommand{\biblebook}[1]{%
   \setcounter{biblechapter}{0}
   \gdef\currbook{#1}
   \chapter*{#1}
   \addcontentsline{toc}{chapter}{#1}}
+
 \newcount\biblechap@svdopt
 \newenvironment{biblechapter}[1][\thebiblechapter]
   {\biblechap@svdopt=#1
-  \ifnum\c@biblechapter=\biblechap@svdopt\else
-    \advance\biblechap@svdopt by -1\fi
-  \setcounter{biblechapter}{\the\biblechap@svdopt}
-  \stepcounter{biblechapter}
-  \setbeforesecskip{1ex}\setbeforesubsecskip{1ex}
-  \lettrine[lines=3,lhang=0,findent=0pt,nindent=0pt,loversize=0.25]{\lettrinefont\color{\chapnumcolor}\,\thebiblechapter\,}{}\ignorespaces}
+    \ifnum\c@biblechapter=\biblechap@svdopt\else
+      \advance\biblechap@svdopt by -1\fi
+    \setcounter{biblechapter}{\the\biblechap@svdopt}
+    \stepcounter{biblechapter}
+    \setbeforesecskip{1ex}\setbeforesubsecskip{1ex}
+    \lettrine[lines=3,lhang=0,findent=0pt,nindent=0pt,loversize=0.25]%
+      {\lettrinefont\color{\chapnumcolor}\,\thebiblechapter\,}{}%
+      \ignorespaces}
   {\par\vspace{\biblechapskip}\setbeforesecskip{0ex}\setbeforesubsecskip{0ex}}
 \newcommand{\@showversenum}{%
   \ifnum\c@bibleverse=1\else{\color{\versenumcolor}\textbf{\thebibleverse}~}\fi%
-  \markboth{{\scshape\currbook} \thebiblechapter:\thebibleverse}{{\scshape\currbook} \thebiblechapter:\thebibleverse}%
+  \markboth{{\scshape\currbook} \thebiblechapter:\thebibleverse}%
+    {{\scshape\currbook} \thebiblechapter:\thebibleverse}%
   \ignorespaces}
 \renewcommand{\verse}{\stepcounter{bibleverse}\@showversenum}
 \newcommand{\verseWithHeading}[1]{%
@@ -114,6 +121,22 @@
 \newcommand{\verseWithSubheading}[1]{%
   \stepcounter{bibleverse}%
   \ifnum\c@bibleverse=1{\subsectionstyle#1\newline}\else\subsection*{#1}\fi\@showversenum}
+
+\newcount\currversepart@svdopt
+\newenvironment{partedverse}[1][1]
+  {\currversepart@svdopt=#1
+    \setcounter{verseparted}{\the\currversepart@svdopt}}
+  {}
+\newcommand{\versepartalph}{%
+  {\color{\versenumcolor}\textbf{\thebibleverse\alph{verseparted}}}%
+  \markboth{{\scshape\currbook} \thebiblechapter:\thebibleverse\alph{verseparted}}
+    {{\scshape\currbook} \thebiblechapter:\thebibleverse\alph{verseparted}}%
+  \ignorespaces}
+\newcommand{\versepart}{\versepartalph~\stepcounter{verseparted}}
+\newcommand{\versepartWithSubheading}[1]{%
+  \ifnum\c@bibleverse=1{\subsectionstyle#1\newline}\else\subsection*{#1}\fi\versepartalph%
+  \stepcounter{verseparted}}
+
 \makeatother
 
 \newcommand{\startornaments}{\AddToShipoutPictureBG{%
@@ -196,7 +219,7 @@
   \node[anchor=north,rotate=-90] at (vecbox.east){%
     \pgfornament[width=0.6*\framesize,symmetry=h]{85}};
   \node[inner sep=6pt, color=black] (text) at (vecbox.center){%
-    \HUGE \textsc{The Holy Bible}};
+    \HUGE \textsc{Alkitab}};
   \node[anchor=north, color=Goldenrod] (base) at (text.south){%
     \pgfornament[width=0.5*\framesize]{71}};
   \node[anchor=south, color=Goldenrod] at (text.north){%
