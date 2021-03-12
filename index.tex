@@ -1,70 +1,218 @@
-\documentclass[twoside,twocolumn,letterpaper,11pt]{book}
-\usepackage[T1]{fontenc}
-\usepackage{ebgaramond}
-\usepackage{lipsum}
-\usepackage{fixltx2e}
+\documentclass[twoside,twocolumn,a4paper,10pt]{memoir}
+% \usepackage{lipsum}
+% \usepackage{fixltx2e}
+\usepackage{xspace}
 \usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
 \usepackage{lettrine}
+\usepackage{flushend}
 \usepackage{fancyhdr}
-  \pagestyle{fancy}
-  \fancyhf{}
-  \fancyhead[RO,LE]{\rightmark}
-  \renewcommand{\headrulewidth}{.5pt}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage[object=vectorian]{pgfornament}
 
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\rightmark}
+\fancyhead[R]{\leftmark}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+\usepackage{fontspec}
+\setmainfont{equity}[
+  % Files
+  Path      = \string~/Library/Fonts/ ,
+  Extension = .otf ,
+  % Fonts
+  UprightFont     = Equity Text A Regular ,
+  UprightFeatures = { SmallCapsFont = Equity Caps A Regular } ,
+  BoldFont        = Equity Text A Bold ,
+  BoldFeatures    = { SmallCapsFont = Equity Caps A Bold } ,
+  ItalicFont      = Equity Text A Italic ,
+  BoldItalicFont  = Equity Text A Bold Italic ,
+  % Features
+  Numbers = OldStyle ]
+
+% old-style numbers don't look great as drop-caps
+\newfontfamily{\lettrinefont}{lettrine}[
+  % Files
+  Path      = \string~/Library/Fonts/ ,
+  Extension = .otf ,
+  % Fonts
+  UprightFont     = Equity Text A Regular ,
+  UprightFeatures = { SmallCapsFont = Equity Caps A Regular } ,
+  BoldFont        = Equity Text A Bold ,
+  BoldFeatures    = { SmallCapsFont = Equity Caps A Bold } ,
+  ItalicFont      = Equity Text A Italic ,
+  BoldItalicFont  = Equity Text A Bold Italic]
+
+\newcommand{\framesize}{\textwidth}
 \setlength{\headwidth}{\textwidth}
-\setlength{\headheight}{15pt}
-\setlength{\headsep}{0pt}
 \setlength{\columnseprule}{0pt}
+\setlength{\columnsep}{28pt}
+\setlength{\parindent}{0pt}
+\setheadfoot{\baselineskip}{2\baselineskip}
+\setheaderspaces{*}{12pt}{*}
 \clubpenalty10000
 \widowpenalty10000
+
+\usepackage[british]{babel}
+
+\newlength{\versespacing}
+\setlength{\versespacing}{.16667em plus .08333em}
+\newcommand{\versespace}{\hspace{\versespacing}}
+\frenchspacing
+
+\usepackage{eso-pic}
+\newcommand\AtPageUpperRight[1]{\AtPageUpperLeft{%
+ \put(\LenToUnit{\paperwidth},\LenToUnit{0\paperheight}){#1}%
+ }}%
+\newcommand\AtPageLowerRight[1]{\AtPageLowerLeft{%
+ \put(\LenToUnit{\paperwidth},\LenToUnit{0\paperheight}){#1}%
+ }}%
+
+\newcommand{\sectionstyle}{\bfseries\raggedright\Large}
+\setsecheadstyle{\sectionstyle}
+\setbeforesecskip{0ex}
+\setaftersecskip{0.1ex}
+
+\newcommand{\subsectionstyle}{\bfseries\itshape\raggedright\large}
+\setsubsecheadstyle{\subsectionstyle}
+\setbeforesubsecskip{0ex}
+\setaftersubsecskip{0.1ex}
 
 \makeatletter
 \newcommand\versenumcolor{red}
 \newcommand\chapnumcolor{red}
-\renewcommand\paragraph{%
-  \@startsection{paragraph}{4}{\z@}%
-                {.25ex \@plus.25ex \@minus.1ex}%
-                {-.5em}%
-                {\normalfont\normalsize\bfseries\color{\versenumcolor}}}%
 \newlength{\biblechapskip}
   \setlength{\biblechapskip}{1em plus .33em minus .2em}
 \newcounter{biblechapter}
 \newcounter{bibleverse}[biblechapter]
 \renewcommand\chaptername{Book}
-\let\ltx@chapter=\chapter
-\let\ltx@paragraph=\paragraph
-\newcommand{\book}[1]{%
+\newcommand{\biblebook}[1]{%
+  \setcounter{biblechapter}{0}
   \gdef\currbook{#1}
-  \ltx@chapter{#1}}
+  \chapter*{#1}
+  \addcontentsline{toc}{chapter}{#1}}
 \newcount\biblechap@svdopt
 \newenvironment{biblechapter}[1][\thebiblechapter]
   {\biblechap@svdopt=#1
   \ifnum\c@biblechapter=\biblechap@svdopt\else
     \advance\biblechap@svdopt by -1\fi
   \setcounter{biblechapter}{\the\biblechap@svdopt}
-  \refstepcounter{biblechapter}
-  \lettrine{\color{\chapnumcolor}\lower-6pt\hbox{\thebiblechapter}}{}\ignorespaces}
-  {\vspace{\biblechapskip}}
-\renewcommand{\verse}[1][\thebibleverse]{%
-  \refstepcounter{bibleverse}
-  \markright{{\scshape\currbook} \thebiblechapter:\thebibleverse}
-  \ifnum\c@bibleverse=1\else
-    \ltx@paragraph*{#1}\fi}%
+  \stepcounter{biblechapter}
+  \setbeforesecskip{1ex}\setbeforesubsecskip{1ex}
+  \lettrine[lines=3,lhang=0,findent=0pt,nindent=0pt,loversize=0.25]{\lettrinefont\color{\chapnumcolor}\,\thebiblechapter\,}{}\ignorespaces}
+  {\par\vspace{\biblechapskip}\setbeforesecskip{0ex}\setbeforesubsecskip{0ex}}
+\newcommand{\@showversenum}{%
+  \ifnum\c@bibleverse=1\else{\color{\versenumcolor}\textbf{\thebibleverse}~}\fi%
+  \markboth{{\scshape\currbook} \thebiblechapter:\thebibleverse}{{\scshape\currbook} \thebiblechapter:\thebibleverse}%
+  \ignorespaces}
+\renewcommand{\verse}{\stepcounter{bibleverse}\@showversenum}
+\newcommand{\verseWithHeading}[1]{%
+  \stepcounter{bibleverse}%
+  \ifnum\c@bibleverse=1{\sectionstyle#1\newline}\else\section*{#1}\fi\@showversenum}
+\newcommand{\verseWithSubheading}[1]{%
+  \stepcounter{bibleverse}%
+  \ifnum\c@bibleverse=1{\subsectionstyle#1\newline}\else\subsection*{#1}\fi\@showversenum}
 \makeatother
+
+\newcommand{\startornaments}{\AddToShipoutPictureBG{%
+  \checkoddpage%
+  \ifoddpage%
+   \AtPageUpperRight{\put(-60,-35){\pgfornament[width=1.75cm,symmetry=h,color=black]{195}}}%
+   \AtPageLowerRight{\put(-60,35){\pgfornament[width=1.75cm,symmetry=v,color=black]{194}}}%
+ \else%
+   \AtPageUpperLeft{\put(10,-35){\pgfornament[width=1.75cm,symmetry=h,color=black]{194}}}%
+   \AtPageLowerLeft{\put(10,35){\pgfornament[width=1.75cm,symmetry=v,color=black]{195}}}
+ \fi}}
+
+\newcommand{\stopornaments}{\ClearShipoutPictureBG}
+
+\renewcommand{\printparttitle}[1]{%
+  \thispagestyle{empty}%
+  \addcontentsline{toc}{part}{#1}%
+  \vspace*{\fill}%
+  \begin{tikzpicture}[transform shape,every node/.style={inner sep=0pt}]%
+    \node[minimum size=\framesize](vecbox){};%
+  \node[inner sep=6pt, color=black] (text) at (vecbox.center){%
+    \HUGE \textsc{#1}};%
+  \node[anchor=north, color=Goldenrod] (base) at (text.south){%
+    \pgfornament[width=0.5*\framesize]{88}};%
+  \end{tikzpicture}%
+  \vspace*{\fill}}
+
+\makechapterstyle{dash-embiggened}{%
+  \chapterstyle{default}
+  \setlength{\beforechapskip}{5\onelineskip}
+  \renewcommand*{\printchaptername}{}
+  \renewcommand*{\chapternamenum}{}
+  \renewcommand*{\chapnumfont}{\normalfont\Huge}
+  \settoheight{\midchapskip}{\chapnumfont 1}
+  \renewcommand*{\printchapternum}{\centering \chapnumfont
+    \rule[0.5\midchapskip]{1em}{0.4pt} \thechapter\
+    \rule[0.5\midchapskip]{1em}{0.4pt}}
+  \renewcommand*{\afterchapternum}{\par\nobreak\vskip 0.5\onelineskip}
+  \renewcommand*{\printchapternonum}{\centering
+                 \vphantom{\chapnumfont 1}\afterchapternum}
+  \renewcommand*{\chaptitlefont}{\normalfont\HUGE\scshape}
+  \renewcommand*{\printchaptertitle}[1]{\centering \chaptitlefont ##1}
+  \setlength{\afterchapskip}{2.5\onelineskip}}
+
+\chapterstyle{dash-embiggened}
+
+\newcommand{\columnbreak}{\pagebreak}
+
+\newcommand{\LORD}{\textsc{Lord}\xspace}
+\newcommand{\LORDs}{\textsc{Lord's}\xspace}
 
 \title{Alkitab}
 \date{}
 \author{}
 
 \begin{document}
-% \frontmatter
-\maketitle
+\frontmatter
+
+\begin{titlingpage}
+\vspace*{\fill}
+
+\begin{tikzpicture}[color=Gold,
+    transform shape,
+    every node/.style={inner sep=0pt}]
+  \node[minimum size=\framesize,fill=Beige!10](vecbox){};
+  \node[anchor=north west] at (vecbox.north west){%
+    \pgfornament[width=0.2*\framesize]{131}};
+  \node[anchor=north east] at (vecbox.north east){%
+    \pgfornament[width=0.2*\framesize,symmetry=v]{131}};
+  \node[anchor=south west] at (vecbox.south west){%
+    \pgfornament[width=0.2*\framesize,symmetry=h]{131}};
+  \node[anchor=south east] at (vecbox.south east){%
+    \pgfornament[width=0.2*\framesize,symmetry=c]{131}};
+  \node[anchor=north] at (vecbox.north){%
+    \pgfornament[width=0.6*\framesize,symmetry=h]{85}};
+  \node[anchor=south] at (vecbox.south){%
+    \pgfornament[width=0.6*\framesize]{85}};
+  \node[anchor=north,rotate=90] at (vecbox.west){%
+    \pgfornament[width=0.6*\framesize,symmetry=h]{85}};
+  \node[anchor=north,rotate=-90] at (vecbox.east){%
+    \pgfornament[width=0.6*\framesize,symmetry=h]{85}};
+  \node[inner sep=6pt, color=black] (text) at (vecbox.center){%
+    \HUGE \textsc{The Holy Bible}};
+  \node[anchor=north, color=Goldenrod] (base) at (text.south){%
+    \pgfornament[width=0.5*\framesize]{71}};
+  \node[anchor=south, color=Goldenrod] at (text.north){%
+    \pgfornament[width=0.5*\framesize,symmetry=h]{71}};
+\end{tikzpicture}
+
+\vspace*{\fill}
+\end{titlingpage}
+
 \tableofcontents
 
-% \mainmatter
+\mainmatter
 \part*{Perjanjian Lama}
-  \setlength{\columnseprule}{.5pt}
 
-\include{kejadian}
+\startornaments
+\input{kejadian.tex}\flushcolsend
+
 
 \end{document}

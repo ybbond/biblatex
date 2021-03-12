@@ -20,6 +20,22 @@ Nak, yang utama adalah `god` // Child, `god` is main.
 
 ## Sumber // Source
 
-http://www.imankatolik.or.id ← beware `http`!
+> Sumber sebelumnya // Previous source:
+>
+> http://www.imankatolik.or.id ← beware `http`!
+
+Sejak commit ketiga, gua ganti sumber // Since the third commit, I changed the source.
+
+Sumber konten // Content source:
+
+[katakombe.org][source]
+
+Sejak commit ketiga, gua pakai template // Since the third commit, I use template.
+
+Gua pakai template dari pengguna // I use template from this user:
+
+[barrucadu/bible][newtemplate]
 
 [tt]: https://yihui.org/tinytex/
+[source]: https://www.katakombe.org/
+[newtemplate]: https://github.com/barrucadu/bible
